@@ -1,0 +1,13 @@
+FROM rust AS builder
+WORKDIR /project
+COPY ./Cargo.toml .
+COPY ./src ./src/
+CMD ["cargo","build"]
+
+FROM rust
+WORKDIR /project
+COPY --from=builder /project/ .
+RUN useradd -r appuser && chown -R appuser /project
+USER appuser
+
+CMD ["cargo", "run"]
