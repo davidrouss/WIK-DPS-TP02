@@ -1,5 +1,7 @@
 FROM rust
-RUN USER=david cargo new --bin project
 WORKDIR /project
-COPY . .
+RUN useradd appuser && chown -R appuser /project
+USER appuser
+COPY ./Cargo.toml .
+COPY ./src ./src/
 CMD ["cargo","run"]
