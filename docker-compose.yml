@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: multi-stage.dockerfile 
+    
+    # Port
+    expose: 
+      - "9000"
+
+    environment:
+      - PING_LISTEN_PORT=9000
+    
+    # Instances
+    deploy:
+      replicas: 4
+
+    # Network
+    networks:
+      - front
+
+    restart: always
+
+  # Reverse-proxy
+  proxy:
+    image: nginx:latest
+
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    
+    ports:
+      - "8080:80"
+
+    depends_on:
+      - app
+
+    networks:
+      - front
+
+    restart: always
+
+networks:
+  front:
+    driver: bridge
+
+
+
+
+
